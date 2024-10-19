@@ -1,1 +1,38 @@
 Explain the code execution based on the order of the messages logged in src/quiz/promise-2darray.txt.
+
+Messaage log:
+Sum called ... 
+returning from sum
+Sum called ... 
+returning from sum
+Failed to sum: Cannot sum an empty array
+Adding 1 to sum
+Adding 2 to sum
+Adding 3 to sum
+Adding 4 to sum
+Adding 5 to sum
+Adding 6 to sum
+Adding 7 to sum
+Adding 8 to sum
+Adding 9 to sum
+sum1: 45
+
+Explainaintion: 
+Code execution starts on main thread from top to bottom. Starting from definition of function sum2DArray, down to its calling code.
+When const sumPromise1 = sum2DArray(array2D) is called,
+Execution goes inside the function and executes everything except the setTimeout part, ie prints Sum called.. and then returning from sum. setTimeout code is pushed and queued to the event handler thread.
+Then main thread continues to const sumPromise2 = sum2DArray([]),
+Again execution goes inside the function and executes everything except the setTimeout part, ie prints Sum called.. and then returning from sum. However this time the promise is rejected due to array being empty.
+So the execution now goes to the then block and executes the catch part which displays Failed to sum: Cannot sum an empty array
+After this the main thread reaches the end and event handler executes the .then of sumPromise1. This executes the inside of setTimeout function and iteratively prints `Adding ${arr[i][j]} to sum`, ie
+Adding 1 to sum
+Adding 2 to sum
+Adding 3 to sum
+Adding 4 to sum
+Adding 5 to sum
+Adding 6 to sum
+Adding 7 to sum
+Adding 8 to sum
+Adding 9 to sum
+and finally, prints sum1: 45
+This completes the execution.
